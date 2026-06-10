@@ -14,8 +14,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Print message
+      - name: Explore runner
         run: | 
-          echo "Hello World"
+          whoami
           pwd
-          ls -ltr
+          ls -la
+          uname -a
