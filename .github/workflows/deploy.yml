@@ -24,11 +24,11 @@ jobs:
 
           chmod 600 ~/.ssh/id_rsa
 
-          ssh -keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
       - name: Copy website
         run: |
-          scp index.html \ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/tmp/
+          scp index.html ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/tmp/
 
       - name: Deploy website
         run: |
