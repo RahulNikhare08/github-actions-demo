@@ -1,11 +1,13 @@
-name: First workflow
+name: Deploy website
 
 on:
   push:
+    branches:
+      - main
 
 jobs:
 
-  hello: 
+  deploy:  
 
     runs-on: ubuntu-latest
 
@@ -14,9 +16,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Explore runner
+      - name: configure SSH
         run: | 
-          whoami
-          pwd
-          ls -la
-          uname -a
+          mkdir -p ~/.ssh
+          
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+
+          chmod 600 ~/.ssh/id_rsa
+
+          ssh -keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Copy website
+        run: |
+          scp index.html \ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/tmp/
+
+      - name: Deploy website
+        run: |
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "sudo cp /tmp/index.html /usr/share/nginx/html/index.html
+          sudo systemctl restart nginx"
